@@ -1,5 +1,10 @@
-FROM quay.io/keycloak/keycloak:latest
+FROM quay.io/keycloak/keycloak:25.0.6 as builder
 
-EXPOSE 8080
+RUN /opt/keycloak/bin/kc.sh build
 
-ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start-dev"]
+FROM quay.io/keycloak/keycloak:25.0.6
+
+COPY --from=builder /opt/keycloak/ /opt/keycloak/
+
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
+CMD ["start", "--optimized"]
